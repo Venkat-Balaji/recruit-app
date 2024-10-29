@@ -90,7 +90,7 @@
 </head>
 <body>
     <div class="chat-container">
-        <div class="chat-header">Chat with the bot</div>
+        <div class="chat-header">AI - Recruit Assistant</div>
         <div class="chat-box" id="chat-box">
             <?php
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
