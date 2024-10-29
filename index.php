@@ -43,7 +43,7 @@
                     <ul class="navbar-nav ml-auto my-2 my-lg-0">
                         <li class="nav-item"><a class="nav-link js-scroll-trigger" href="index.php?page=home">Home</a></li>
                         <li class="nav-item"><a class="nav-link js-scroll-trigger" href="index.php?page=about">About</a></li>
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="chatbot.php">Chat with AI</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="chatbot.php">AI - Recruit Assistant</a></li>
                         <li class="nav-item"><a class="nav-link js-scroll-trigger" href="candidate_scheduler.php">Schedule Interview</a></li>
                         <li class="nav-item"><a class="nav-link js-scroll-trigger" href="practice_interview.php">Practice Interview</a></li>
                      
