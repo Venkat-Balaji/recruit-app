@@ -3,7 +3,7 @@ The Recruitment Management System is a simple web application, develop in PHP My
 
 Admin Dashboard
 
-Application, Vacancy, Status Category, Users, Settings, New Applicants.
+Application, Vacancy, Status Category, Users, Settings, New Applicants , Schedule Interview , Send Mail to the Candidate .
 
 Applications
 
@@ -27,7 +27,7 @@ System Name, Email Address, Contact Number, Description, and Image.
 
 User Dashboard
 
-Home, About, List of Vacancy and search Job.
+Home, About, List of Vacancy , chat with AI , Schedule Interview , Practice Interview.
 
  
 
@@ -37,7 +37,7 @@ Name of Project:     Recruitment Management System
 Language Used:      PHP
 Database Used:      My SQL
 Design Interface:    Bootstrap JavaScript, HTML, Ajax, JQuery,
-Browser:                  Opera Mozilla Google Chrome IE8,
+Browser:                  Opera , Mozilla , Google Chrome,
 Software:                 WAMP/ XAMPP/ LAMP/MAMP
 About System
 
@@ -64,3 +64,5 @@ Step 8th. Import recruitment_db.sql file given inside the zip package in SQL fil
 Step 9th. Run the script http://localhost/Recruitment_Management_System
 
 Step 10th. Password: Username: admin / Password: admin123
+
+
