@@ -6,36 +6,118 @@
     <title>Technical Interview</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #e9ecef;
             margin: 0;
             padding: 0;
+            color: #333;
         }
+
         .container {
-            width: 50%;
-            margin: 100px auto;
+            width: 90%;
+            max-width: 600px;
+            margin: 50px auto;
             padding: 20px;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            animation: fadeIn 0.5s ease-in-out;
         }
+
+        h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        form div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
         .question {
             margin-bottom: 20px;
         }
+
         textarea {
-            width: 100%;
-            height: 100px;
-            margin-top: 5px;
-            margin-bottom: 10px;
+            height: 120px;
+            resize: vertical;
         }
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
+
+        .thank-you {
+            text-align: center;
+            margin-top: 20px;
+            color: #28a745;
+            font-weight: bold;
         }
-        button:hover {
-            background-color: #0056b3;
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+
+            button {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+
+            input[type="text"], textarea {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -57,10 +139,10 @@
 
         // Example questions based on the entered skill
         $questions = [
-            "Explain a recent project where you used $skill. What challenges did you face?",
-            "How would you optimize a program written in $skill to improve performance?"
+            "Can you generate a pattern of a diamond in $skill, made of numbers such that the numbers in each row increase towards the center of the diamond and decrease symmetrically, with the size of the diamond based on a user-provided odd integer n?",
+            "Explain a recent project where you used $skill. What challenges did you face?"
         ];
-        
+
         echo '<form method="POST" action="technical_interview.php">';
         foreach ($questions as $index => $question) {
             echo '<div class="question">';
@@ -77,7 +159,7 @@
         $answer2 = htmlspecialchars($_POST['answer1']);
 
         if (!empty($answer1) && !empty($answer2)) {
-            echo '<h3>Thank you for your answers!</h3>';
+            echo '<div class="thank-you">Thank you for your answers!</div>';
             echo '<p><strong>Answer 1:</strong> ' . $answer1 . '</p>';
             echo '<p><strong>Answer 2:</strong> ' . $answer2 . '</p>';
         } else {

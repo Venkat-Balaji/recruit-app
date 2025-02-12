@@ -1,171 +1,187 @@
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $question = $_POST['question'] ?? '';
+
+    if (!empty($question)) {
+        echo askGemini($question);
+    } else {
+        echo "Please provide a valid question.";
+    }
+    exit; // Stop further HTML rendering for AJAX requests
+}
+
+function askGemini($question) {
+    $apiKey = 'AIzaSyAPoYC30oi4qC-q1H1SPc-Iw5bw3IeIZ8U'; // Replace with your Gemini API key
+    $apiUrl = 'https://api.generativeai.googleapis.com/v1/models/gemini-pro:generateText';
+
+    $data = json_encode([
+        'prompt' => $question,
+        'temperature' => 0.7,
+        'max_tokens' => 100
+    ]);
+
+    $ch = curl_init($apiUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: Bearer ' . $apiKey
+    ]);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+    $response = curl_exec($ch);
+    if (curl_errno($ch)) {
+        return "cURL Error: " . curl_error($ch);
+    }
+    curl_close($ch);
+
+    $responseData = json_decode($response, true);
+    if (isset($responseData['choices'][0]['text'])) {
+        return $responseData['choices'][0]['text'];
+    } elseif (isset($responseData['error'])) {
+        return "API Error: " . $responseData['error']['message'];
+    } else {
+        return "No valid response from Gemini AI.";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI - Recruit Assistant</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <title>AI Recruit Assistant</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', sans-serif;
-        }
         body {
+            margin: 0;
+            font-family: Arial, sans-serif;
             background-color: #1a1a2e;
+            color: #fff;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
         .chat-container {
-            width: 450px;
-            height: 600px;
-            background-color: #16213e;
-            border-radius: 12px;
-            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+            width: 50%;
+            max-width: 500px;
+            height: 80%;
+            background-color: #0f3460;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
+        }
+        .chat-header {
+            padding: 15px;
+            text-align: center;
+            background-color: #16213e;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
             display: flex;
             flex-direction: column;
         }
-        .chat-header {
-            background-color: #0f3460;
-            color: #fff;
-            text-align: center;
-            padding: 15px;
-            font-size: 24px;
-            font-weight: 500;
-            border-bottom: 1px solid #3d5af1;
-        }
-        .chat-box {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            background-color: #1a1a2e;
-        }
-        .chat-message {
-            margin-bottom: 10px;
+        .chat-messages p {
+            margin: 5px 0;
             padding: 10px;
-            border-radius: 8px;
-            max-width: 75%;
+            background-color: #1a1a2e;
+            border-radius: 5px;
+            max-width: 80%;
+            word-wrap: break-word;
         }
-        .chat-message.user {
-            background-color: #3d5af1;
-            color: #fff;
+        .chat-messages .user {
             align-self: flex-end;
-            text-align: right;
+            background-color: #0f3460;
         }
-        .chat-message.ai {
-            background-color: #e94560;
-            color: #fff;
+        .chat-messages .ai {
             align-self: flex-start;
-            text-align: left;
+            background-color: #16213e;
         }
         .chat-input {
             display: flex;
-            border-top: 1px solid #3d5af1;
-            background-color: #0f3460;
+            padding: 10px;
+            background-color: #16213e;
         }
         .chat-input input {
             flex: 1;
-            padding: 15px;
+            padding: 10px;
             border: none;
-            outline: none;
-            background-color: #1a1a2e;
-            color: #fff;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 1em;
         }
         .chat-input button {
-            padding: 15px;
-            background-color: #3d5af1;
+            padding: 10px 20px;
             border: none;
+            background-color: #0f3460;
             color: #fff;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .chat-input button:hover {
-            background-color: #273c75;
         }
     </style>
 </head>
 <body>
     <div class="chat-container">
-        <div class="chat-header">AI - Recruit Assistant</div>
-        <div class="chat-box" id="chat-box">
-            <?php
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $userMessage = htmlspecialchars($_POST['message']);
-                echo "<div class='chat-message user'>You: $userMessage</div>";
-
-                $aiReply = askGemini($userMessage);
-                echo "<div class='chat-message ai'>AI: $aiReply</div>";
-            }
-
-            function askGemini($question) {
-                $apiKey = 'AIzaSyAPoYC30oi4qC-q1H1SPc-Iw5bw3IeIZ8U';  // Replace with your actual API key
-                $apiUrl = 'https://api.generativeai.googleapis.com/v1/models/gemini-pro:generateText';
-
-                $data = json_encode([
-                    'prompt' => $question,
-                    'temperature' => 0.7,
-                    'max_tokens' => 100
-                ]);
-
-                $ch = curl_init($apiUrl);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_POST, true);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                    'Content-Type: application/json',
-                    'Authorization: Bearer ' . $apiKey
-                ]);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-
-                $response = curl_exec($ch);
-                if (curl_errno($ch)) {
-                    return "An error occurred: " . curl_error($ch);
-                }
-                curl_close($ch);
-
-                $responseData = json_decode($response, true);
-                echo "<pre style='display:none'>" . print_r($responseData, true) . "</pre>";
-
-                if (isset($responseData['choices'][0]['text'])) {
-                    return $responseData['choices'][0]['text'];
-                } else {
-                    
-                    return "Python is a high-level, interpreted, general-purpose programming language. It is designed to be easy to read and write, and its syntax is often compared to that of natural languages. Python is a dynamically typed language, which means that the type of a variable is not known until runtime. It is also an object-oriented language, which means that it supports the concepts of classes and objects.
-
-                    Python is versatile, and it can be used for a wide range of tasks, including:
-                    
-                    * Web development
-                    * Data science
-                    * Machine learning
-                    * Artificial intelligence
-                    * Automation
-                    * Scripting
-                    * Data analysis
-                     large companies, including Google, Amazon, and Microsoft. It is also a popular choice for teaching programming, and it is used in many schools and universities.
-                    
-                    Here are some of the key features of Python:
-                    
-                    * Easy to read and write
-                    * Dynamically typed
-                    * Object-oriented
-                    * Versatile
-                    * Popular
-                    * Used in many large companies and schools
-                    
-                    If you are looking for a programming language that is easy to learn and use, Python is a good option. It is a versatile language that can be used for a wide range of tasks.";
-                }
-            }
-            ?>
+        <div class="chat-header">AI Recruit Assistant</div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+            <input type="text" id="userInput" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
         </div>
-        <form method="POST" class="chat-input">
-            <input type="text" name="message" placeholder="Type your message..." required>
-            <button type="submit">Send</button>
-        </form>
     </div>
+
+    <script>
+        function sendMessage() {
+            const userInput = document.getElementById("userInput");
+            const chatMessages = document.getElementById("chatMessages");
+
+            if (userInput.value.trim() !== "") {
+                // Append user message
+                const userMessage = document.createElement("p");
+                userMessage.className = "user";
+                userMessage.textContent = userInput.value;
+                chatMessages.appendChild(userMessage);
+
+                // Scroll to the bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                // Fetch AI response
+                fetch("", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: `question=${encodeURIComponent(userInput.value)}`
+                })
+                .then(response => response.text())
+                .then(data => {
+                    const aiMessage = document.createElement("p");
+                    aiMessage.className = "ai";
+                    aiMessage.textContent = data;
+                    chatMessages.appendChild(aiMessage);
+
+                    // Scroll to the bottom
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                })
+                .catch(error => {
+                    const errorMessage = document.createElement("p");
+                    errorMessage.className = "ai";
+                    errorMessage.textContent = "Error: Unable to fetch response.";
+                    chatMessages.appendChild(errorMessage);
+                });
+
+                // Clear input field
+                userInput.value = "";
+            }
+        }
+    </script>
 </body>
 </html>

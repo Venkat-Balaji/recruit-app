@@ -1,7 +1,7 @@
 <?php
 // Load existing bookings from CSV if available
 function load_bookings() {
-    $file = 'C:\xampp\htdocs\Recruitment_Management_System\admin\bookings.csv';
+    $file = 'C:\XAMPP\htdocs\recruit-app\admin\bookings.csv';
     if (file_exists($file)) {
         return array_map('str_getcsv', file($file));
     }
@@ -10,7 +10,7 @@ function load_bookings() {
 
 // Save bookings to CSV
 function save_bookings($data) {
-    $file = 'C:\xampp\htdocs\Recruitment_Management_System\admin\bookings.csv';
+    $file = 'C:\XAMPP\htdocs\recruit-app\admin\bookings.csv';
     $f = fopen($file, 'a');
     fputcsv($f, $data);
     fclose($f);

@@ -1,11 +1,13 @@
 import google.generativeai as genai
 from flask import Flask, request, jsonify
 
+
+
 # Initialize Flask app
 app = Flask(__name__)
 
 # Set your Gemini API key (replace with your actual API key)
-my_api_key_gemini = 'AIzaSyAPoYC30oi4qC-q1H1SPc-Iw5bw3IeIZ8U'  # Replace with your actual API key
+my_api_key_gemini = 'AIzaSyB5YNppBGZgDl6pIxCRdfq5HOJ-Pfnvdjw'  # Replace with your actual API key
 genai.configure(api_key=my_api_key_gemini)
 
 # Function to generate interview questions based on a skill or introduction
@@ -71,4 +73,5 @@ def ask():
 
 if __name__ == '__main__':
     # Run the Flask app on localhost, port 5000
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
